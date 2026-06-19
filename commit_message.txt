@@ -1,3 +1,0 @@
-Implement P3, P4, P5, and P6 and end-to-end integration
-
-This adds the core calculation, logic classification and endpoints to provide the Pehredaar services, matching the golden standards.

@@ -12,8 +12,9 @@ def test_generate_sheet():
     assert "noticed my exposure is ₹15000" in res2["script"]
 
 def test_draft_letter():
-    res1 = draft_letter("PROPORTIONATE_ON_FIXED")
-    assert "MC2024:proportionate" in res1["draft_letter"]
+    res1 = draft_letter("PROPORTIONATE_ON_FIXED", clause_id="MC2024:proportionate")
+    assert "IRDAI Master Circular 2024" in res1["draft_letter"]
+    assert "proportionate" in res1["draft_letter"]
 
     res2 = draft_letter("NOT_A_REAL_CODE")
     assert "appealing the recent claim rejection/short settlement" in res2["draft_letter"]
