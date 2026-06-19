@@ -1,0 +1,15 @@
+{"id":"R01","raw_text":"<PASTE real letter: 'claim deducted as room rent exceeds eligible limit of Rs 5000; proportionate deduction applied on all charges including pharmacy'>","expected":{"reason_code":"PROPORTIONATE_ON_FIXED","secondary":"ROOM_RENT_PROPORTIONATE","winnability":"green","clause":"MC2024:proportionate"}}
+{"id":"R02","raw_text":"<'rejected: pre-existing diabetes not disclosed at proposal'>","expected":{"reason_code":"PED_NONDISCLOSURE","winnability":"red","clause":"MC2024:moratorium","override_if":"continuous_cover_months>=60 => amber/green"}}
+{"id":"R03","raw_text":"<'claim within 2-year waiting period for this ailment'>","expected":{"reason_code":"WAITING_PERIOD","winnability":"red","clause":"policy:waiting"}}
+{"id":"R04","raw_text":"<'discharge summary not legible / missing investigation reports'>","expected":{"reason_code":"DOCUMENTATION_TECHNICAL","winnability":"green","clause":"PPI2017:claims"}}
+{"id":"R05","raw_text":"<'hospitalisation not medically necessary, could be OPD'>","expected":{"reason_code":"NOT_MEDICALLY_NECESSARY","winnability":"amber","clause":"PPI2017:claims"}}
+{"id":"R06","raw_text":"<'intimation received 12 days after admission, beyond 48 hours'>","expected":{"reason_code":"LATE_INTIMATION","winnability":"amber","clause":"MC2024:condonation"}}
+{"id":"R07","raw_text":"<'charges exceed reasonable and customary for the geography'>","expected":{"reason_code":"REASONABLE_CUSTOMARY","winnability":"amber","clause":"policy:RC"}}
+{"id":"R08","raw_text":"<'gloves, syringes, admin & documentation charges are non-payable'>","expected":{"reason_code":"NON_PAYABLE_ITEMS","winnability":"green","clause":"MC2024:nonpayable"}}
+{"id":"R09","raw_text":"<'cashless pre-authorization denied at network hospital'>","expected":{"reason_code":"CASHLESS_DENIED","winnability":"green","clause":"MC2024:cashless"}}
+{"id":"R10","raw_text":"<'settled as per knee replacement package cap of Rs 1.5L'>","expected":{"reason_code":"TARIFF_PACKAGE_CAP","winnability":"amber","clause":"policy:package"}}
+{"id":"R11","raw_text":"<'permanent exclusion: cosmetic procedure'>","expected":{"reason_code":"EXCLUSION_PERMANENT","winnability":"red","clause":"policy:exclusions"}}
+{"id":"R12","raw_text":"<'cataract sub-limit Rs 40000 per eye applied'>","expected":{"reason_code":"TARIFF_PACKAGE_CAP","secondary":"NON_PAYABLE_ITEMS","winnability":"red","clause":"policy:package"}}
+{"id":"R13","raw_text":"<'PED not disclosed; however policy in 6th continuous year'>","expected":{"reason_code":"PED_NONDISCLOSURE","winnability":"green","clause":"MC2024:moratorium","rationale":"moratorium crossed"}}
+{"id":"R14","raw_text":"<'alleged fabricated bills, claim repudiated for fraud'>","expected":{"reason_code":"FRAUD_MISREP","winnability":"red","clause":"MC2024:fraud","next":"legal counsel"}}
+{"id":"R15","raw_text":"<'proportionate deduction on surgeon & nursing due to higher room'>","expected":{"reason_code":"ROOM_RENT_PROPORTIONATE","winnability":"amber","clause":"MC2024:proportionate","rationale":"valid on room-linked variable charges"}}
