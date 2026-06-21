@@ -1,0 +1,113 @@
+{
+  "_doc": "Golden proportionate-deduction scenarios. All rupee values hand-computed. The calculator (pure code, no model) must match every 'expected' field EXACTLY. variable_charges = subject to proportionate deduction (nursing/surgeon/OT/consult/anaesthesia). fixed_charges = NOT subject (medicines/implants/consumables/diagnostics).",
+  "formula": "factor=min(1,cap/actual); room_eligible=min(actual,cap)*days; variable_eligible=sum(variable)*factor; fixed_eligible=sum(fixed); proportionate_hit=sum(variable)-variable_eligible; total_oop=total_bill-(room_eligible+variable_eligible+fixed_eligible)",
+  "scenarios": [
+    {
+      "id": "S1_classic_8k_vs_5k",
+      "inputs": {"sum_insured": 500000, "room_cap_per_day": 5000, "actual_room_rent_per_day": 8000, "days": 3,
+        "variable_charges": {"surgery": 80000, "doctor_visit": 15000, "nursing": 6000},
+        "fixed_charges": {"medicines": 4000, "diagnostics": 5000}},
+      "expected": {"factor": 0.625, "room_charges": 24000, "room_eligible": 15000, "room_excess": 9000,
+        "variable_total": 101000, "variable_eligible": 63125, "proportionate_hit": 37875,
+        "fixed_total": 9000, "fixed_eligible": 9000, "total_bill": 134000, "total_eligible": 87125, "total_oop": 46875}
+    },
+    {
+      "id": "S2_within_cap_no_deduction",
+      "inputs": {"sum_insured": 500000, "room_cap_per_day": 5000, "actual_room_rent_per_day": 4500, "days": 4,
+        "variable_charges": {"surgery": 60000, "nursing": 8000},
+        "fixed_charges": {"medicines": 7000}},
+      "expected": {"factor": 1.0, "room_charges": 18000, "room_eligible": 18000, "room_excess": 0,
+        "variable_total": 68000, "variable_eligible": 68000, "proportionate_hit": 0,
+        "fixed_total": 7000, "fixed_eligible": 7000, "total_bill": 93000, "total_eligible": 93000, "total_oop": 0}
+    },
+    {
+      "id": "S3_icu_2pct_cap",
+      "inputs": {"sum_insured": 1000000, "room_cap_per_day": 20000, "actual_room_rent_per_day": 25000, "days": 2,
+        "variable_charges": {"icu_care": 50000, "surgeon": 120000},
+        "fixed_charges": {"implants": 90000, "medicines": 30000}},
+      "expected": {"factor": 0.8, "room_charges": 50000, "room_eligible": 40000, "room_excess": 10000,
+        "variable_total": 170000, "variable_eligible": 136000, "proportionate_hit": 34000,
+        "fixed_total": 120000, "fixed_eligible": 120000, "total_bill": 340000, "total_eligible": 296000, "total_oop": 44000}
+    },
+    {
+      "id": "S4_severe_2x_room",
+      "inputs": {"sum_insured": 300000, "room_cap_per_day": 3000, "actual_room_rent_per_day": 6000, "days": 5,
+        "variable_charges": {"surgery": 150000, "nursing": 20000, "anaesthesia": 25000},
+        "fixed_charges": {"medicines": 18000, "diagnostics": 12000}},
+      "expected": {"factor": 0.5, "room_charges": 30000, "room_eligible": 15000, "room_excess": 15000,
+        "variable_total": 195000, "variable_eligible": 97500, "proportionate_hit": 97500,
+        "fixed_total": 30000, "fixed_eligible": 30000, "total_bill": 255000, "total_eligible": 142500, "total_oop": 112500}
+    },
+    {
+      "id": "S5_pct_cap_input",
+      "inputs": {"sum_insured": 500000, "room_cap_pct_of_si": 1, "actual_room_rent_per_day": 7500, "days": 2,
+        "variable_charges": {"surgeon": 100000, "ot": 20000},
+        "fixed_charges": {"medicines": 10000}},
+      "expected": {"derived_room_cap_per_day": 5000, "factor": 0.6666666667, "room_charges": 15000, "room_eligible": 10000, "room_excess": 5000,
+        "variable_total": 120000, "variable_eligible": 80000, "proportionate_hit": 40000,
+        "fixed_total": 10000, "fixed_eligible": 10000, "total_bill": 145000, "total_eligible": 100000, "total_oop": 45000}
+    },
+    {
+      "id": "S6_no_sublimit_policy",
+      "inputs": {"sum_insured": 1000000, "room_cap_per_day": null, "no_room_limit": true, "actual_room_rent_per_day": 12000, "days": 3,
+        "variable_charges": {"surgery": 200000}, "fixed_charges": {"medicines": 15000}},
+      "expected": {"factor": 1.0, "room_charges": 36000, "room_eligible": 36000, "room_excess": 0,
+        "variable_total": 200000, "variable_eligible": 200000, "proportionate_hit": 0,
+        "fixed_total": 15000, "fixed_eligible": 15000, "total_bill": 251000, "total_eligible": 251000, "total_oop": 0}
+    },
+    {
+      "id": "S7_wrongly_applied_to_fixed",
+      "_note": "Insurer WRONGLY applied proportionate deduction to medicines+implants. Correct calc keeps them fixed. Difference = ClaimBack recoverable amount.",
+      "inputs": {"sum_insured": 500000, "room_cap_per_day": 5000, "actual_room_rent_per_day": 10000, "days": 2,
+        "variable_charges": {"surgeon": 80000}, "fixed_charges": {"implants": 100000, "medicines": 20000}},
+      "expected": {"factor": 0.5, "room_charges": 20000, "room_eligible": 10000, "room_excess": 10000,
+        "variable_total": 80000, "variable_eligible": 40000, "proportionate_hit": 40000,
+        "fixed_total": 120000, "fixed_eligible": 120000, "total_bill": 220000, "total_eligible": 170000, "total_oop": 50000,
+        "insurer_wrong_eligible_if_fixed_also_cut": 110000, "recoverable_vs_wrong": 60000}
+    },
+    {
+      "id": "S8_single_day",
+      "inputs": {"sum_insured": 400000, "room_cap_per_day": 4000, "actual_room_rent_per_day": 5000, "days": 1,
+        "variable_charges": {"daycare_procedure": 30000}, "fixed_charges": {"medicines": 2000}},
+      "expected": {"factor": 0.8, "room_charges": 5000, "room_eligible": 4000, "room_excess": 1000,
+        "variable_total": 30000, "variable_eligible": 24000, "proportionate_hit": 6000,
+        "fixed_total": 2000, "fixed_eligible": 2000, "total_bill": 37000, "total_eligible": 30000, "total_oop": 7000}
+    },
+    {
+      "id": "S9_copay_after_deduction",
+      "_note": "Co-pay 10% applies AFTER proportionate eligibility. Tests ordering.",
+      "inputs": {"sum_insured": 500000, "room_cap_per_day": 5000, "actual_room_rent_per_day": 6000, "days": 2, "copay_pct": 10,
+        "variable_charges": {"surgery": 90000}, "fixed_charges": {"medicines": 10000}},
+      "expected": {"factor": 0.8333333333, "room_charges": 12000, "room_eligible": 10000, "room_excess": 2000,
+        "variable_total": 90000, "variable_eligible": 75000, "proportionate_hit": 15000,
+        "fixed_total": 10000, "fixed_eligible": 10000, "eligible_before_copay": 95000, "copay_amount": 9500,
+        "insurer_pays": 85500, "total_bill": 112000, "total_oop": 26500}
+    },
+    {
+      "id": "S10_disease_sublimit_overrides",
+      "_note": "Cataract disease sub-limit ₹40000 caps the surgery regardless of room. Tests sub-limit precedence.",
+      "inputs": {"sum_insured": 500000, "room_cap_per_day": 5000, "actual_room_rent_per_day": 5000, "days": 1,
+        "disease_sublimit": {"name": "cataract", "cap": 40000},
+        "variable_charges": {"cataract_surgery": 60000}, "fixed_charges": {"lens_implant": 15000}},
+      "expected": {"factor": 1.0, "room_excess": 0, "proportionate_hit": 0,
+        "disease_cap_applied": 40000, "surgery_eligible": 40000, "surgery_excess": 20000,
+        "total_bill": 80000, "total_eligible": 45000, "total_oop": 35000}
+    },
+    {
+      "id": "S11_high_room_low_variable",
+      "inputs": {"sum_insured": 1000000, "room_cap_per_day": 10000, "actual_room_rent_per_day": 30000, "days": 1,
+        "variable_charges": {"consult": 9000}, "fixed_charges": {"diagnostics": 6000}},
+      "expected": {"factor": 0.3333333333, "room_charges": 30000, "room_eligible": 10000, "room_excess": 20000,
+        "variable_total": 9000, "variable_eligible": 3000, "proportionate_hit": 6000,
+        "fixed_total": 6000, "fixed_eligible": 6000, "total_bill": 45000, "total_eligible": 19000, "total_oop": 26000}
+    },
+    {
+      "id": "S12_edge_actual_equals_cap",
+      "inputs": {"sum_insured": 500000, "room_cap_per_day": 5000, "actual_room_rent_per_day": 5000, "days": 3,
+        "variable_charges": {"surgery": 70000}, "fixed_charges": {"medicines": 5000}},
+      "expected": {"factor": 1.0, "room_charges": 15000, "room_eligible": 15000, "room_excess": 0,
+        "variable_total": 70000, "variable_eligible": 70000, "proportionate_hit": 0,
+        "fixed_total": 5000, "fixed_eligible": 5000, "total_bill": 90000, "total_eligible": 90000, "total_oop": 0}
+    }
+  ]
+}
