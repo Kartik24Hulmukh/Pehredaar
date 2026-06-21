@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pehredaar — Discharge Defender & ClaimBack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: {} }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen">
+
+<!-- Header -->
+<header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">🛡️</div>
+            <div>
+                <h1 class="text-lg font-bold">Pehredaar</h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Discharge Defender & ClaimBack</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <span id="status-badge" class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">● Operational</span>
+        </div>
+    </div>
+</header>
+
+<!-- Tab Navigation -->
+<nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 flex gap-1">
+        <button onclick="switchTab('defender')" id="tab-defender" class="tab-btn active px-4 py-3 text-sm font-medium border-b-2 border-teal-600 text-teal-600">
+            🏥 Discharge Defender
+        </button>
+        <button onclick="switchTab('claimback')" id="tab-claimback" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+            📋 ClaimBack
+        </button>
+        <button onclick="switchTab('citations')" id="tab-citations" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+            📚 Citations
+        </button>
+    </div>
+</nav>
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+
+<!-- ==================== DISCHARGE DEFENDER TAB ==================== -->
+<div id="content-defender" class="tab-content">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-2">Discharge Defender</h2>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">Check your bill BEFORE you sign. Catch proportionate deductions, non-payable items, and price breaches in real-time.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Input Form -->
+        <div class="card bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+            <h3 class="text-lg font-semibold mb-4">Bill & Policy Details</h3>
+            
+            <div class="space-y-4">
+                <!-- Policy Selection -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Policy Plan</label>
+                    <select id="policy-name" class="input w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                        <option value="">— Select Policy (or enter manually) —</option>
+                    </select>
+                </div>
+
+                <!-- Sum Insured -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Sum Insured (₹)</label>
+                        <input type="number" id="sum-insured" value="500000" class="input w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Room Cap/Day (₹)</label>
+                        <input type="number" id="room-cap" value="5000" placeholder="e.g. 5000" class="input w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                    </div>
+                </div>
+
+                <!-- Room Details -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Actual Room Rent/Day (₹)</label>
+                        <input type="number" id="actual-room" value="8000" class="input w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Days</label>
+                        <input type="number" id="days" value="3" class="input w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                    </div>
+                </div>
+
+                <!-- Variable Charges -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Variable Charges (subject to proportionate deduction)</label>
+                    <div id="variable-charges" class="space-y-2">
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Item name (e.g. Surgery)" class="input flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm charge-name">
+                            <input type="number" placeholder="Amount ₹" class="input w-32 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm charge-amount">
+                        </div>
+                    </div>
+                    <button onclick="addChargeRow('variable-charges')" class="mt-2 text-xs text-teal-600 hover:underline">+ Add row</button>
+                </div>
+
+                <!-- Fixed Charges -->
+                <div>
+                    <label class="block text-sm font-medium mb-1">Fixed Charges (NOT subject to proportionate deduction)</label>
+                    <div id="fixed-charges" class="space-y-2">
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Item name (e.g. Medicines)" class="input flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm charge-name">
+                            <input type="number" placeholder="Amount ₹" class="input w-32 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm charge-amount">
+                        </div>
+                    </div>
+                    <button onclick="addChargeRow('fixed-charges')" class="mt-2 text-xs text-teal-600 hover:underline">+ Add row</button>
+                </div>
+
+                <button onclick="runDefenderAnalysis()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2.5 rounded-lg transition">
+                    Analyze Bill →
+                </button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="defender-results" class="card bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+            <div class="text-center text-gray-400 py-12">
+                <p class="text-4xl mb-3">🏥</p>
+                <p>Enter your bill details and click "Analyze Bill" to see your exposure.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== CLAIMBACK TAB ==================== -->
+<div id="content-claimback" class="tab-content hidden">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-2">ClaimBack</h2>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">Got a rejection or short-settlement? Classify it, get a winnability score, and draft an IRDAI-grounded appeal.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Input -->
+        <div class="card bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+            <h3 class="text-lg font-semibold mb-4">Rejection Letter</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Paste the rejection/short-settlement letter text</label>
+                    <textarea id="rejection-text" rows="8" class="input w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-mono" placeholder="Paste the full text of the rejection letter here..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Continuous Cover (months)</label>
+                        <input type="number" id="continuous-months" placeholder="e.g. 72" class="input w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Claim Amount (₹)</label>
+                        <input type="number" id="claim-amount" placeholder="e.g. 150000" class="input w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm">
+                    </div>
+                </div>
+
+                <button onclick="runClaimBackAnalysis()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2.5 rounded-lg transition">
+                    Analyze & Draft Appeal →
+                </button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="claimback-results" class="card bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+            <div class="text-center text-gray-400 py-12">
+                <p class="text-4xl mb-3">📋</p>
+                <p>Paste your rejection letter and click "Analyze & Draft Appeal".</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== CITATIONS TAB ==================== -->
+<div id="content-citations" class="tab-content hidden">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-2">IRDAI Clause Library</h2>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">All citations used by Pehredaar are from verified IRDAI/Government of India source documents. The AI may cite ONLY from this library — no fabricated citations.</p>
+    </div>
+    <div id="citations-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="text-center text-gray-400 py-12 col-span-2">
+            <p class="text-4xl mb-3">📚</p>
+            <p>Loading citations...</p>
+        </div>
+    </div>
+</div>
+
+</main>
+
+<footer class="border-t border-gray-200 dark:border-gray-800 mt-12 py-6">
+    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-gray-500 dark:text-gray-400">
+        <p>Pehredaar — Informational tool, not legal or insurance advice. All citations from verified IRDAI/Government of India sources.</p>
+        <p class="mt-1">Built with ❤️ for Indian patients. <a href="https://github.com/KairoPhantom/Pehredaar" class="text-teal-600 hover:underline">GitHub</a></p>
+    </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
